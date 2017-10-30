@@ -8,53 +8,103 @@ var Promise = require('bluebird');
 
 app.get('/', function (req, res) {
 
-	readFile();
+	var wordPromiseArray = [];
+	var wordArray = [];
 
-	var test = [];
+	readFile().then(function(rawText) {
+		console.log('raw text is: ' + rawText);
 
-	test.push(indivWord("hi"));
-	test.push(indivWord("bye"));
 
-	res.send(test);
+		console.log(rawText.split(" "));
+
+
+
+
+
+		wordPromiseArray.push(
+			indivWord("hi")
+				.then(function (word) {
+					wordArray.push(word);
+					// console.log(word);
+					// console.log('hi done');
+				})
+		);
+
+
+		wordPromiseArray.push(
+			indivWord("bye")
+				.then(function (word) {
+					wordArray.push(word);
+				})
+		);
+
+		Promise.all(wordPromiseArray).then(function () {
+			console.log('all done!');
+			res.send(wordArray);
+		});
+
+
+
+
+
+
+	});
+
+
 });
 
 function indivWord(origWord) {
 
-	translateWord(origWord);
+	return new Promise(function (resolve) {
 
-	return {
-		"orig": origWord,
-		"trans": "testtalsdkfja;l"
-	}
+		translateWord(origWord)
+			.then(function (response) {
+				resolve({
+					"orig": origWord,
+					"trans": response
+				});
+			});
+
+
+	})
 }
 
 
 function translateWord(wordToTrans) {
 
-	translate(wordToTrans, {to: 'iw'})
-		.then(function (res) {
-			console.log(res.text);
-			return res.text;
-		})
-		.catch(function(err) {
+	return new Promise(function (resolve) {
+
+		translate(wordToTrans, {to: 'iw'})
+			.then(function (res) {
+				console.log(res.text);
+				resolve(res.text);
+			});
+	})
+		.catch(function (err) {
 			console.log("err" + err);
 		});
 }
 
 function readFile() {
-	// Make sure we got a filename on the command line.
-	if (process.argv.length < 3) {
-		console.log('Usage: node ' + process.argv[1] + ' FILENAME');
-		process.exit(1);
-	}
+
+
+	return new Promise(function (resolve) {
+
+		// Make sure we got a filename on the command line.
+		if (process.argv.length < 3) {
+			console.log('Usage: node ' + process.argv[1] + ' FILENAME');
+			process.exit(1);
+		}
 // Read the file and print its contents.
-	var fs = require('fs')
-		, filename = process.argv[2];
-	fs.readFile(filename, 'utf8', function (err, data) {
-		if (err) throw err;
-		console.log('OK: ' + filename);
-		console.log(data)
-	});
+		var fs = require('fs')
+			, filename = process.argv[2];
+		fs.readFile(filename, 'utf8', function (err, data) {
+			if (err) throw err;
+			console.log('OK: ' + filename);
+			// console.log(data)
+			resolve(data);
+		});
+	})
 }
 
 app.listen(3000, function () {

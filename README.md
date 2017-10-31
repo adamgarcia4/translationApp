@@ -2,4 +2,6 @@
 This is a Translator Application!
 
 
-<iframe src='https://gfycat.com/ifr/SeveralOpulentIchneumonfly' frameborder='0' scrolling='no' width='2560' height='1600' allowfullscreen></iframe>
+
+
+![Demo](https://thumbs.gfycat.com/SeveralOpulentIchneumonfly-size_restricted.gif)

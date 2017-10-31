@@ -2,11 +2,21 @@ const express = require('express');
 const app = express();
 
 const translate = require('google-translate-api');
+var path = require('path');
 
 var Promise = require('bluebird');
 
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname + '/public/test.html'));
+});
+
+// Have a way of interlinear
+// If you click on the word, you get a popup in english
+// Maybe have a switch
+// only translate the word once, any subsequent places it will highlight the first occurence
+
+app.get('/translate', function (req, res) {
 
 	// Pseudocode
 	// 1.  Read text from textfile
@@ -44,13 +54,41 @@ app.get('/', function (req, res) {
 				return a.index - b.index;
 			});
 
-			res.send(wordArray); // Sort async problem?
+
+			var concatOverride = [
+				{
+					start: 0,
+					length: 2,
+					overrideMethod: 0 // 0 is simple concat, 1 is retranslate
+				}
+			];
+
+
+			for(var i=0; i<concatOverride.length; i++) {
+				//concatOverride[i]
+			}
+
+
+
+
+
+
+			res.send({
+				rawText: rawText,
+				wordArray: wordArray
+			}); // Sort async problem?
 		});
 
 	});
 
 
 });
+
+function simpleConcat(concatSetting, wordArr) {
+
+	// wordArr.slice(concatSetting.start, )
+
+}
 
 // Returns an object with all information necessary to translate a word
 function indivWord(origWord, index) {
@@ -74,7 +112,7 @@ function translateWord(wordToTrans) {
 
 	return new Promise(function (resolve) {
 
-		translate(wordToTrans, {to: 'en'}) // See http://bit.ly/2zSddBw for list of languages
+		translate(wordToTrans, {to: 'iw'}) // See http://bit.ly/2zSddBw for list of languages
 			.then(function (res) {
 				console.log(res.text);
 				resolve(res.text);

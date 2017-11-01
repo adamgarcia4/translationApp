@@ -6,9 +6,17 @@ var path = require('path');
 
 var Promise = require('bluebird');
 
+var exphbs = require('express-handlebars');
+app.set('views', __dirname + '/views');
+app.engine('handlebars', exphbs({
+	defaultLayout: 'main',
+	layoutsDir: __dirname + '/views/layouts',
+	partialsDir: __dirname + '/views/partials'
+}));
+app.set('view engine', 'handlebars');
 
-app.get('/', function(req, res) {
-	res.sendFile(path.join(__dirname + '/public/test.html'));
+app.get('/', function (req, res) {
+	res.render('home');
 });
 
 // Have a way of interlinear
@@ -28,14 +36,14 @@ app.get('/translate', function (req, res) {
 	var wordPromiseArray = [];
 
 
-	readFile().then(function(rawText) {
+	readFile().then(function (rawText) {
 
 		// console.log('raw text is: ' + rawText);
 
 		var rawWordArr = rawText.split(" ");
 		var wordArray = []; // Prepare final storage of words and their translations
 
-		for(var i=0; i<rawWordArr.length; i++) {
+		for (var i = 0; i < rawWordArr.length; i++) {
 
 			wordPromiseArray.push(
 				indivWord(rawWordArr[i], i)
@@ -50,7 +58,7 @@ app.get('/translate', function (req, res) {
 		Promise.all(wordPromiseArray).then(function () {
 			console.log('all done!');
 
-			wordArray.sort(function(a, b) {
+			wordArray.sort(function (a, b) {
 				return a.index - b.index;
 			});
 
@@ -64,19 +72,21 @@ app.get('/translate', function (req, res) {
 			];
 
 
-			for(var i=0; i<concatOverride.length; i++) {
+			for (var i = 0; i < concatOverride.length; i++) {
 				//concatOverride[i]
 			}
 
+			console.log(wordArray);
 
-
-
-
-
-			res.send({
+			res.render('home',{
 				rawText: rawText,
 				wordArray: wordArray
-			}); // Sort async problem?
+			});
+
+			// res.send({
+			// 	rawText: rawText,
+			// 	wordArray: wordArray
+			// }); // Sort async problem?
 		});
 
 	});
@@ -112,9 +122,9 @@ function translateWord(wordToTrans) {
 
 	return new Promise(function (resolve) {
 
-		translate(wordToTrans, {to: 'iw'}) // See http://bit.ly/2zSddBw for list of languages
+		translate(wordToTrans, {to: 'en'}) // See http://bit.ly/2zSddBw for list of languages
 			.then(function (res) {
-				console.log(res.text);
+				// console.log(res.text);
 				resolve(res.text);
 			});
 	})

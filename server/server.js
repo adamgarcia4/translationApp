@@ -15,6 +15,15 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
+
+
+var bodyParser = require('body-parser');
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+	extended: true
+}));
+
+
 app.get('/', function (req, res) {
 	res.render('home');
 });
@@ -93,6 +102,10 @@ app.get('/translate', function (req, res) {
 
 
 });
+
+app.post('/send', function(req, res) {
+	res.send('it is: ' + req.body.name);
+})
 
 function simpleConcat(concatSetting, wordArr) {
 

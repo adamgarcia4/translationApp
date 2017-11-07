@@ -39,7 +39,6 @@
 </table>
 
 
-
 <script>
 
 	$(document).ready(function () {
@@ -50,21 +49,32 @@
 			e.preventDefault();
 			console.log(window.location.origin + '/send');
 
+
 			var formData = {
 				'name': $('#exampleFormControlTextarea1').val()
 			};
 			console.log(formData);
 
-
-			$('#outputText').html(formData.name);
-
-			$('.testWrap').wrap(function() {
-
-				return "<a data-toggle='tooltip' title='" + formData.name + "'></a>";
-//				return "<a data-toggle='tooltip' title='" + formData.name + "'>" + formData.name + "</a>";
+			$.ajax({
+				url: window.location.origin + '/translate',
+				type: "POST",
+				data: formData,
+				success: function (data) {
+					console.log(data);
+					$('#outputText').html('');
+					for (var i = 0; i < data['wordArray'].length; i++) {
+						// index, orig, trans
+						var word = data['wordArray'][i];
+						var addition = "<a data-toggle='tooltip' class='tool' title='" + word['trans'] + "'>" + word['orig'] +  " </a>";
+						console.log('add: ' + addition);
+						$('#outputText').append($.parseHTML(addition));
+						$('[data-toggle="tooltip"]').tooltip();
+					}
+				},
+				error: function (jXHR, textStatus, errorThrown) {
+					alert(errorThrown);
+				}
 			});
-			$('[data-toggle="tooltip"]').tooltip();
-
 		});
 
 		$('#outputText').on('click', function () {
@@ -84,30 +94,17 @@
 				url: window.location.origin + '/send',
 				type: "POST",
 				data: data,
-				success: function(data) {
+				success: function (data) {
 					console.log(data);
+				},
+				error: function (jXHR, textStatus, errorThrown) {
+					alert(errorThrown);
 				}
 			});
 
 
 		});
 
-	});
-
-
-	$('#myform').on('submit', function (e) {
-		e.preventDefault();
-		$.ajax({
-			url: $(this).attr('action') || window.location.pathname,
-			type: "GET",
-			data: $(this).serialize(),
-			success: function (data) {
-				$("#form_output").html(data);
-			},
-			error: function (jXHR, textStatus, errorThrown) {
-				alert(errorThrown);
-			}
-		})
 	});
 
 

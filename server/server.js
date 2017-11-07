@@ -16,9 +16,8 @@ app.engine('handlebars', exphbs({
 app.set('view engine', 'handlebars');
 
 
-
 var bodyParser = require('body-parser');
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 	extended: true
 }));
@@ -33,7 +32,7 @@ app.get('/', function (req, res) {
 // Maybe have a switch
 // only translate the word once, any subsequent places it will highlight the first occurence
 
-app.get('/translate', function (req, res) {
+app.get('/translateFile', function (req, res) {
 
 	// Pseudocode
 	// 1.  Read text from textfile
@@ -87,7 +86,7 @@ app.get('/translate', function (req, res) {
 
 			console.log(wordArray);
 
-			res.render('home',{
+			res.render('home', {
 				rawText: rawText,
 				wordArray: wordArray
 			});
@@ -103,7 +102,70 @@ app.get('/translate', function (req, res) {
 
 });
 
-app.post('/send', function(req, res) {
+
+app.post('/translate', function (req, res) {
+
+	// Pseudocode
+	// 1.  Read text from textfile
+	// 2.  Split text file by word
+	// 3.  Individually translate words via google translate API
+	// 4.  Send back results
+
+	// Holds promises to each translation submission.
+	var wordPromiseArray = [];
+
+
+	var rawText = req.body.name;
+
+	var rawWordArr = rawText.split(" ");
+	var wordArray = []; // Prepare final storage of words and their translations
+
+	for (var i = 0; i < rawWordArr.length; i++) {
+
+		wordPromiseArray.push(
+			indivWord(rawWordArr[i], i)
+				.then(function (word) {
+					wordArray.push(word);
+				})
+		);
+
+	}
+
+	// Once all async translations have been completed, sort wordArray (via their index) and return to user
+	Promise.all(wordPromiseArray).then(function () {
+		console.log('all done!');
+
+		wordArray.sort(function (a, b) {
+			return a.index - b.index;
+		});
+
+
+		var concatOverride = [
+			{
+				start: 0,
+				length: 2,
+				overrideMethod: 0 // 0 is simple concat, 1 is retranslate
+			}
+		];
+
+
+		for (var i = 0; i < concatOverride.length; i++) {
+			//concatOverride[i]
+		}
+
+		console.log(wordArray);
+
+		res.send({
+			rawText: rawText,
+			wordArray: wordArray
+		});
+	});
+
+
+});
+
+
+app.post('/send', function (req, res) {
 	res.send('it is: ' + req.body.name);
 })
 
@@ -137,7 +199,6 @@ function translateWord(wordToTrans) {
 
 		translate(wordToTrans, {to: 'en'}) // See http://bit.ly/2zSddBw for list of languages
 			.then(function (res) {
-				// console.log(res.text);
 				resolve(res.text);
 			});
 	})

@@ -7,8 +7,20 @@ Very frequently, I turn to Google Translate for translations of words.  However,
 ## Solution
 Provide a user-friendly interface to perform individual word transations behind the scenes.  The user can now simply enter any length of text and receive word-by-word translations.
 
+## Technology Used
+
+As this was designed to be a very quick project, I utilized technology that I am very familiar with.  The additional challenge that I placed upon myself for the purposes of learning was to not use any frontend framework (like Angular 2), and get familiar with making AJAX calls directly via Jquery.
+
+- Backend
+  - Node.js Programming Language
+  - Express.js Web Application Framework
+- Frontend
+  - Jquery for Single Page Application functionality
+  - Bootstrap CSS framework
+
 ## Demo
 
 https://frozen-forest-49632.herokuapp.com/
 
-![Demo](https://thumbs.gfycat.com/SeveralOpulentIchneumonfly-size_restricted.gif)
+![Demo](https://thumbs.gfycat.com/WideeyedGiddyAfricanclawedfrog-size_restricted.gif)
+

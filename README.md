@@ -1,5 +1,7 @@
-# translationApp
+# Translation App
 This is a very quick and small application that I made to assist me in my Hebrew-learning journey.  
+
+### https://frozen-forest-49632.herokuapp.com/
 
 ## Problem
 Very frequently, I turn to Google Translate for translations of words.  However, the Google Translator attempts to translate logical portions of a sentence together, rather than a word-by-word translation.
